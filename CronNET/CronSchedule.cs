@@ -1,24 +1,21 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace CronNET
 {
-    public interface ICronSchedule
-    {
-        bool isValid(string expression);
-        bool isTime(DateTime date_time);
-    }
-
     public class CronSchedule : ICronSchedule
     {
         #region Readonly Class Members
 
-        readonly static Regex divided_regex = new Regex(@"(\*/\d+)");
-        readonly static Regex range_regex = new Regex(@"(\d+\-\d+)\/?(\d+)?");
-        readonly static Regex wild_regex = new Regex(@"(\*)");
-        readonly static Regex list_regex = new Regex(@"(((\d+,)*\d+)+)");
-        readonly static Regex validation_regex = new Regex(divided_regex + "|" + range_regex + "|" + wild_regex + "|" + list_regex);
+        readonly static Regex _dividedRegex = new Regex(@"(\*/\d+)");
+        readonly static Regex _rangeRegex = new Regex(@"(\d+\-\d+)\/?(\d+)?");
+        readonly static Regex _wildRegex = new Regex(@"(\*)");
+        readonly static Regex _listLegex = new Regex(@"(((\d+,)*\d+)+)");
+        readonly static Regex _validationRegex = new Regex(_dividedRegex + "|" + _rangeRegex + "|" + _wildRegex + "|" + _listLegex);
 
         #endregion
 
@@ -42,100 +39,100 @@ namespace CronNET
         public CronSchedule(string expressions)
         {
             this._expression = expressions;
-            generate();
+            _generate();
         }
 
         #endregion
 
         #region Public Methods
 
-        private bool isValid()
+        private bool IsValid()
         {
-            return isValid(this._expression);
+            return IsValid(this._expression);
         }
 
-        public bool isValid(string expression)
+        public bool IsValid(string expression)
         {
-            MatchCollection matches = validation_regex.Matches(expression);
-            return matches.Count > 0;//== 5;
+            MatchCollection matches = _validationRegex.Matches(expression);
+            return matches.Count > 0;
         }
 
-        public bool isTime(DateTime date_time)
+        public bool IsTime(DateTime dateTime)
         {
-            return minutes.Contains(date_time.Minute) &&
-                   hours.Contains(date_time.Hour) &&
-                   days_of_month.Contains(date_time.Day) &&
-                   months.Contains(date_time.Month) &&
-                   days_of_week.Contains((int)date_time.DayOfWeek);
+            return minutes.Contains(dateTime.Minute) &&
+                   hours.Contains(dateTime.Hour) &&
+                   days_of_month.Contains(dateTime.Day) &&
+                   months.Contains(dateTime.Month) &&
+                   days_of_week.Contains((int)dateTime.DayOfWeek);
         }
 
-        private void generate()
+        private void _generate()
         {
-            if (!isValid()) return;
+            if (!IsValid()) return;
 
-            MatchCollection matches = validation_regex.Matches(this._expression);
+            MatchCollection matches = _validationRegex.Matches(this._expression);
 
-            generate_minutes(matches[0].ToString());
+            _generateMinutes(matches[0].ToString());
 
             if (matches.Count > 1)
-                generate_hours(matches[1].ToString());
+                _generateHours(matches[1].ToString());
             else
-                generate_hours("*");
-            
+                _generateHours("*");
+
             if (matches.Count > 2)
-                generate_days_of_month(matches[2].ToString());
+                _generateDaysOfMonth(matches[2].ToString());
             else
-                generate_days_of_month("*");
-            
+                _generateDaysOfMonth("*");
+
             if (matches.Count > 3)
-                generate_months(matches[3].ToString());
+                _generateMonths(matches[3].ToString());
             else
-                generate_months("*");
-            
+                _generateMonths("*");
+
             if (matches.Count > 4)
-                generate_days_of_weeks(matches[4].ToString());
+                _generateDaysOfWeeks(matches[4].ToString());
             else
-                generate_days_of_weeks("*");
+                _generateDaysOfWeeks("*");
         }
 
-        private void generate_minutes(string match)
+        private void _generateMinutes(string match)
         {
-            this.minutes = generate_values(match, 0, 60);
+            this.minutes = _generateValues(match, 0, 60);
         }
 
-        private void generate_hours(string match)
+        private void _generateHours(string match)
         {
-            this.hours = generate_values(match, 0, 24);
+            this.hours = _generateValues(match, 0, 24);
         }
 
-        private void generate_days_of_month(string match)
+        private void _generateDaysOfMonth(string match)
         {
-            this.days_of_month = generate_values(match, 1, 32);
+            this.days_of_month = _generateValues(match, 1, 32);
         }
 
-        private void generate_months(string match)
+        private void _generateMonths(string match)
         {
-            this.months = generate_values(match, 1, 13);
+            this.months = _generateValues(match, 1, 13);
         }
 
-        private void generate_days_of_weeks(string match)
+        private void _generateDaysOfWeeks(string match)
         {
-            this.days_of_week = generate_values(match, 0, 7);
+            this.days_of_week = _generateValues(match, 0, 7);
         }
 
-        private List<int> generate_values(string configuration, int start, int max)
+        private List<int> _generateValues(string configuration, int start, int max)
         {
-            if (divided_regex.IsMatch(configuration)) return divided_array(configuration, start, max);
-            if (range_regex.IsMatch(configuration)) return range_array(configuration);
-            if (wild_regex.IsMatch(configuration)) return wild_array(configuration, start, max);
-            if (list_regex.IsMatch(configuration)) return list_array(configuration);
+            if (_dividedRegex.IsMatch(configuration)) return _dividedArray(configuration, start, max);
+            if (_rangeRegex.IsMatch(configuration)) return _rangeArray(configuration);
+            if (_wildRegex.IsMatch(configuration)) return _wildArray(configuration, start, max);
+            if (_listLegex.IsMatch(configuration)) return _listArray(configuration);
 
             return new List<int>();
         }
 
-        private List<int> divided_array(string configuration, int start, int max)
+        private List<int> _dividedArray(string configuration, int start, int max)
         {
-            if (!divided_regex.IsMatch(configuration))
+            if (!_dividedRegex.IsMatch(configuration))
                 return new List<int>();
 
             List<int> ret = new List<int>();
@@ -149,9 +146,9 @@ namespace CronNET
             return ret;
         }
 
-        private List<int> range_array(string configuration)
+        private List<int> _rangeArray(string configuration)
         {
-            if (!range_regex.IsMatch(configuration))
+            if (!_rangeRegex.IsMatch(configuration))
                 return new List<int>();
 
             List<int> ret = new List<int>();
@@ -178,9 +175,9 @@ namespace CronNET
             return ret;
         }
 
-        private List<int> wild_array(string configuration, int start, int max)
+        private List<int> _wildArray(string configuration, int start, int max)
         {
-            if (!wild_regex.IsMatch(configuration))
+            if (!_wildRegex.IsMatch(configuration))
                 return new List<int>();
 
             List<int> ret = new List<int>();
@@ -191,9 +188,9 @@ namespace CronNET
             return ret;
         }
 
-        private List<int> list_array(string configuration)
+        private List<int> _listArray(string configuration)
         {
-            if (!list_regex.IsMatch(configuration))
+            if (!_listLegex.IsMatch(configuration))
                 return new List<int>();
 
             List<int> ret = new List<int>();

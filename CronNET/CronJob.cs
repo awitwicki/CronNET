@@ -1,15 +1,12 @@
-using System;
-using System.Threading;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace CronNET
 {
-    public interface ICronJob
-    {
-        void execute(DateTime date_time);
-        void abort();
-    }
-
-    public class CronJob : ICronJob
+    internal class CronJob : ICronJob
     {
         private readonly ICronSchedule _cron_schedule = new CronSchedule();
         private readonly ThreadStart _thread_start;
@@ -23,11 +20,11 @@ namespace CronNET
         }
 
         private object _lock = new object();
-        public void execute(DateTime date_time)
+        public void Execute(DateTime dateTime)
         {
             lock (_lock)
             {
-                if (!_cron_schedule.isTime(date_time))
+                if (!_cron_schedule.IsTime(dateTime))
                     return;
 
                 if (_thread.ThreadState == ThreadState.Running)
@@ -38,9 +35,9 @@ namespace CronNET
             }
         }
 
-        public void abort()
+        public void Abort()
         {
-          _thread.Abort();  
+            _thread.Abort();
         }
 
     }

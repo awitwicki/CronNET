@@ -1,55 +1,50 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Timers;
-using System.Threading;
 
 namespace CronNET
 {
-    public interface ICronDaemon
-    {
-        void AddJob(string schedule, ThreadStart action);
-        void Start();
-        void Stop();
-    }
-
     public class CronDaemon : ICronDaemon
     {
-        private readonly System.Timers.Timer timer = new System.Timers.Timer(30000);
-        private readonly List<ICronJob> cron_jobs = new List<ICronJob>();
-        private DateTime _last= DateTime.Now;
+        private readonly System.Timers.Timer _timer = new System.Timers.Timer(30000);
+        private readonly List<ICronJob> _cronJobs = new List<ICronJob>();
+        private DateTime _last = DateTime.Now;
 
         public CronDaemon()
         {
-            timer.AutoReset = true;
-            timer.Elapsed += timer_elapsed;
+            _timer.AutoReset = true;
+            _timer.Elapsed += _timerElapsed;
         }
 
         public void AddJob(string schedule, ThreadStart action)
         {
             var cj = new CronJob(schedule, action);
-            cron_jobs.Add(cj);
+            _cronJobs.Add(cj);
         }
 
         public void Start()
         {
-            timer.Start();
+            _timer.Start();
         }
 
         public void Stop()
         {
-            timer.Stop();
+            _timer.Stop();
 
-            foreach (CronJob job in cron_jobs)
-                job.abort();
+            foreach (CronJob job in _cronJobs)
+                job.Abort();
         }
 
-        private void timer_elapsed(object sender, ElapsedEventArgs e)
+        private void _timerElapsed(object sender, ElapsedEventArgs e)
         {
             if (DateTime.Now.Minute != _last.Minute)
             {
                 _last = DateTime.Now;
-                foreach (ICronJob job in cron_jobs)
-                    job.execute(DateTime.Now);
+                foreach (ICronJob job in _cronJobs)
+                    job.Execute(DateTime.Now);
             }
         }
     }
