@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CronNET
 {
-    internal class CronJob : ICronJob
+    public class CronJob : ICronJob
     {
         private readonly ICronSchedule _cron_schedule = new CronSchedule();
         private readonly ThreadStart _thread_start;
