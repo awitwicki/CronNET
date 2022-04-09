@@ -8,7 +8,7 @@ namespace CronNET.Tests
     public class CronScheduleTests
     {
         [Fact]
-        public void is_valid_test()
+        public void IsValidTest()
         {
             CronSchedule cronSchedule = new CronSchedule();
             Assert.True(cronSchedule.IsValid("*/2"));
@@ -23,7 +23,7 @@ namespace CronNET.Tests
         }
 
         [Fact]
-        public static void divided_array_test()
+        public static void DividedArrayTest()
         {
             var cron_schedule = new CronSchedule("*/2");
             List<int> results = cron_schedule.minutes.GetRange(0, 5);//("*/2", 0, 10);
@@ -31,7 +31,7 @@ namespace CronNET.Tests
         }
 
         [Fact]
-        public static void range_array_test()
+        public static void RangeArrayTest()
         {
             var cron_schedule = new CronSchedule("1-10");
             List<int> results = cron_schedule.minutes.GetRange(0, 10);//();
@@ -42,7 +42,7 @@ namespace CronNET.Tests
         }
 
         [Fact]
-        public void wild_array_test()
+        public void WildArrayTest()
         {
             var cron_schedule = new CronSchedule("*");
             List<int> results = cron_schedule.minutes.GetRange(0, 10);//("*", 0, 10);
@@ -50,7 +50,7 @@ namespace CronNET.Tests
         }
 
         [Fact]
-        public void list_array_test()
+        public void ListArrayTest()
         {
             var cron_schedule = new CronSchedule("1,2,3,4,5,6,7,8,9,10");
             List<int> results = cron_schedule.minutes;
@@ -58,7 +58,7 @@ namespace CronNET.Tests
         }
 
         [Fact]
-        public void generate_values_divided_test()
+        public void GenerateValuesDividedTest()
         {
             var cron_schedule = new CronSchedule("*/2");
             List<int> results = cron_schedule.minutes.GetRange(0, 5);//(, 0, 10);
@@ -66,7 +66,7 @@ namespace CronNET.Tests
         }
 
         [Fact]
-        public void generate_values_range_test()
+        public void GenerateValuesRangeTest()
         {
             var cron_schedule = new CronSchedule("1-10");
             List<int> results = cron_schedule.minutes.GetRange(0, 10);//(, 0, 10);
@@ -74,42 +74,42 @@ namespace CronNET.Tests
         }
 
         [Fact]
-        public void generate_minutes_test()
+        public void GenerateMinutesTest()
         {
             var cron_schedule = new CronSchedule("1,2,3 * * * *");
             Assert.Equal(cron_schedule.minutes.ToArray(), new int[] { 1, 2, 3 });
         }
 
         [Fact]
-        public void generate_hours_test()
+        public void GenerateHoursTest()
         {
             var cron_schedule = new CronSchedule("* 1,2,3 * * *");
             Assert.Equal(cron_schedule.hours.ToArray(), new int[] { 1, 2, 3 });
         }
 
         [Fact]
-        public void generate_days_of_month_test()
+        public void GenerateDaysOfMonthTest()
         {
             var cron_schedule = new CronSchedule("* * 1,2,3 * *");
             Assert.Equal(cron_schedule.days_of_month.ToArray(), new int[] { 1, 2, 3 });
         }
 
         [Fact]
-        public void generate_months_test()
+        public void GenerateMonthsTest()
         {
             var cron_schedule = new CronSchedule("* * * 1,2,3 *");
             Assert.Equal(cron_schedule.months.ToArray(), new int[] { 1, 2, 3 });
         }
 
         [Fact]
-        public void generate_days_of_weeks()
+        public void GenerateDaysOfWeeks()
         {
             var cron_schedule = new CronSchedule("* * * * 1,2,3 ");
             Assert.Equal(cron_schedule.days_of_week.ToArray(), new int[] { 1, 2, 3 });
         }
 
         [Fact]
-        public void is_time_minute_test()
+        public void IsTimeMinuteTest()
         {
             var cron_schedule = new CronSchedule("0 * * * *");
             Assert.True(cron_schedule.IsTime(DateTime.Parse("8:00 am")));
@@ -126,7 +126,7 @@ namespace CronNET.Tests
         }
 
         [Fact]
-        public void is_time_hour_test()
+        public void IsTimeHourTest()
         {
             var cron_schedule = new CronSchedule("* 0 * * *");
             Assert.True(cron_schedule.IsTime(DateTime.Parse("12:00 am")));
@@ -137,14 +137,14 @@ namespace CronNET.Tests
         }
 
         [Fact]
-        public void is_time_day_of_month_test()
+        public void IsTimeDayOfMonthTest()
         {
             var cron_schedule = new CronSchedule("* * 1 * *");
             Assert.True(cron_schedule.IsTime(DateTime.Parse("2010/08/01")));
         }
 
         [Fact]
-        public void is_time_month_test()
+        public void IsTimeMonthTest()
         {
             var cron_schedule = new CronSchedule("* * * 1 *");
             Assert.True(cron_schedule.IsTime(DateTime.Parse("1/1/2008")));
@@ -153,31 +153,31 @@ namespace CronNET.Tests
             Assert.False(cron_schedule.IsTime(DateTime.Parse("1/1/2008")));
 
             cron_schedule = new CronSchedule("* * * */3 *");
-            Assert.True(cron_schedule.IsTime(DateTime.Parse("3/1/2008")));
-            Assert.True(cron_schedule.IsTime(DateTime.Parse("6/1/2008")));
+            Assert.True(cron_schedule.IsTime(DateTime.Parse("1/3/2008")));
+            Assert.True(cron_schedule.IsTime(DateTime.Parse("1/6/2008")));
         }
 
         [Fact]
-        public void is_time_day_of_week_test()
+        public void IsTimeDayOfWeekTest()
         {
             var cron_schedule = new CronSchedule("* * * * 0");
-            Assert.True(cron_schedule.IsTime(DateTime.Parse("10/12/2008")));
-            Assert.False(cron_schedule.IsTime(DateTime.Parse("10/13/2008")));
+            Assert.True(cron_schedule.IsTime(DateTime.Parse("12/10/2008")));
+            Assert.False(cron_schedule.IsTime(DateTime.Parse("13/10/2008")));
 
             cron_schedule = new CronSchedule("* * * * */2");
-            Assert.True(cron_schedule.IsTime(DateTime.Parse("10/14/2008")));
+            Assert.True(cron_schedule.IsTime(DateTime.Parse("14/10/2008")));
         }
 
         [Fact]
-        public void is_time_test()
+        public void IsTimeTest()
         {
             var cron_schedule = new CronSchedule("0 0 12 10 *");
-            Assert.True(cron_schedule.IsTime(DateTime.Parse("12:00:00 am 10/12/2008")));
-            Assert.False(cron_schedule.IsTime(DateTime.Parse("12:01:00 am 10/12/2008")));
+            Assert.True(cron_schedule.IsTime(DateTime.Parse("12:00:00 am 12/10/2008")));
+            Assert.False(cron_schedule.IsTime(DateTime.Parse("12:01:00 am 12/10/2008")));
         }
 
         [Fact]
-        public static void integration_test()
+        public static void IntegrationTest()
         {
             CronDaemon d = new CronDaemon();
             d.AddJob("*/1 * * * *", () => { Console.WriteLine(DateTime.Now.ToString()); });

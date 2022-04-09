@@ -39,6 +39,5 @@ namespace CronNET
         {
             _thread.Abort();
         }
-
     }
 }
