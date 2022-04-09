@@ -1,10 +1,14 @@
-CronNET
----------------------------
+# CronNET
 
 CronNET is a simple C# library for running tasks based on a cron schedule.
 
-Cron Schedules
-===============
+This repo is fork of original CronNET library, ported for work with .net 6
+
+## Tests
+
+![Tests](https://github.com/awitwicki/CronNET/actions/workflows/dotnet.yml/badge.svg)
+
+## Cron Schedules
 
 CronNET supports most cron scheduling.  See tests for supported formats.
 
@@ -28,70 +32,34 @@ CronNET supports most cron scheduling.  See tests for supported formats.
   `1-55 * * * *`     Every minute through the 55th minute.
   `* 1,10,20 * * *`  Every 1st, 10th, and 20th hours.
 ```
+## Examples
 
-Console Example
-===============
+```C#
+CronDaemon d = new CronDaemon();
 
-``` c#
-using System.Threading;
-using CronNET;
-
-namespace CronNETExample.Console
+d.AddJob("*/1 * * * *", () => 
 {
-    class Program
-    {
-        private static readonly CronDaemon cron_daemon = new CronDaemon();            
+    Console.WriteLine(DateTime.Now.ToString());
+});
 
-        static void Main(string[] args)
-        {
-            cron_daemon.add_job(new CronJob("* * * * *", task));
-            cron_daemon.start();
+d.Start();
 
-            // Wait and sleep forever. Let the cron daemon run.
-            while(true) Thread.Sleep(6000);
-        }
-
-        static void task()
-        {
-          Console.WriteLine("Hello, world.")
-        }
-    }
-}
+// Wait and sleep forever. Let the cron daemon run.
+await Task.Delay(Timeout.Infinite);
 ```
 
-Windows Service Example
-=======================
-
-``` c#
-using System.Threading;
-using CronNET;
-
-namespace CronNETExample.WindowsService
+```C#
+private void task()
 {
-    public partial class Service : ServiceBase
-    {
-        private readonly CronDaemon cron_daemon = new CronDaemon();
-
-        public Service()
-        {
-            InitializeComponent();
-        }
-
-        protected override void OnStart(string[] args)
-        {
-            cron_daemon.add_job(new CronJob("*/2 * * * *", task));
-            cron_daemon.start();
-        }
-
-        protected override void OnStop()
-        {
-            cron_daemon.stop();
-        }
-
-        private void task()
-        {
-          Console.WriteLine("Hello, world.")
-        }
-    }
+    Console.WriteLine("Hello, world.")
 }
+
+cron_daemon.add_job(new CronJob("* * * * *", task));
+cron_daemon.start();
+
+// Wait and sleep forever. Let the cron daemon run.
+await Task.Delay(Timeout.Infinite);
+
+// Stop daemon if you want to
+cron_daemon.stop();
 ```
