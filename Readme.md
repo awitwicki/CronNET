@@ -6,9 +6,16 @@ This repo is fork of original CronNET library, ported for work with .net 6
 
 ## Tests
 
-![Tests](https://github.com/awitwicki/CronNET/actions/workflows/dotnet.yml/badge.svg)
+![Tests](https://img.shields.io/github/workflow/status/awitwicki/CronNET/.NET)
+![Tests](https://img.shields.io/github/issues/awitwicki/CronNET)
+![License](https://img.shields.io/badge/License-MIT-blue)
+![Tests](https://img.shields.io/github/languages/top/awitwicki/CronNET)
+![Tests](https://img.shields.io/badge/dotnet-6.0-blue)
+![Tests](https://img.shields.io/github/last-commit/awitwicki/CronNET)
 
 ## Cron Schedules
+
+https://crontab.guru/
 
 CronNET supports most cron scheduling.  See tests for supported formats.
 
@@ -39,7 +46,7 @@ CronDaemon d = new CronDaemon();
 
 d.AddJob("*/1 * * * *", () => 
 {
-    Console.WriteLine(DateTime.Now.ToString());
+  Console.WriteLine(DateTime.Now.ToString());
 });
 
 d.Start();
@@ -49,17 +56,17 @@ await Task.Delay(Timeout.Infinite);
 ```
 
 ```C#
-private void task()
+private void _myTask()
 {
-    Console.WriteLine("Hello, world.")
+  Console.WriteLine("Hello, world.")
 }
 
-cron_daemon.add_job(new CronJob("* * * * *", task));
-cron_daemon.start();
+d.AddJob(new CronJob("* * * * *", _myTask));
+d.Start();
 
 // Wait and sleep forever. Let the cron daemon run.
 await Task.Delay(Timeout.Infinite);
 
 // Stop daemon if you want to
-cron_daemon.stop();
+d.Stop();
 ```
