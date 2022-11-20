@@ -9,14 +9,39 @@ namespace CronNET
     public class CronJob : ICronJob
     {
         private readonly ICronSchedule _cron_schedule = new CronSchedule();
-        private readonly ThreadStart _thread_start;
-        private Thread _thread;
+        private readonly Action _action;
+        private readonly Task _task;
+        private CancellationTokenSource _cts{ get; set; }
 
-        public CronJob(string schedule, ThreadStart thread_start)
+        public CronJob(string schedule, Action action)
         {
             _cron_schedule = new CronSchedule(schedule);
-            _thread_start = thread_start;
-            _thread = new Thread(thread_start);
+            _action = action;
+
+            _cts = new CancellationTokenSource();
+
+            _task = new Task(() =>
+            {
+                try
+                {
+                    // Specify this thread's Abort() as the cancel delegate
+                    using (_cts.Token.Register(() => { 
+                        //Console.WriteLine("canceled");
+                        return;
+                    }))
+                    {
+                        _action();
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    Console.WriteLine("\nTasks cancelled: timed out.\n");
+                }
+                finally
+                {
+                    _cts.Dispose();
+                }
+            }, _cts.Token);
         }
 
         private object _lock = new object();
@@ -27,17 +52,16 @@ namespace CronNET
                 if (!_cron_schedule.IsTime(dateTime))
                     return;
 
-                if (_thread.ThreadState == ThreadState.Running)
+                if (_task.Status == TaskStatus.Running)
                     return;
 
-                _thread = new Thread(_thread_start);
-                _thread.Start();
+                _task.Start();
             }
         }
 
         public void Abort()
         {
-            _thread.Abort();
+            _cts.Cancel();
         }
     }
 }

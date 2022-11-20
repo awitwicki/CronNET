@@ -178,12 +178,47 @@ namespace CronNET.Tests
         }
 
         [Fact]
-        public static void IntegrationTest()
+        public static void AbortJob()
         {
             CronDaemon d = new CronDaemon();
-            d.AddJob("*/1 * * * *", () => { Console.WriteLine(DateTime.Now.ToString()); });
+            d.AddJob("* * * * *", () =>
+            {
+                // Do something
+                Thread.Sleep(5000);
+
+                // Throw test error
+                Assert.True(false);
+            });
+
             d.Start();
-            //Thread.Sleep(60 * 1000);
+
+            Thread.Sleep(1000);
+
+            d.Stop();
+
+            Thread.Sleep(70 * 1000);
+        }
+
+        [Fact]
+        public static void AbortWorkingJob()
+        {
+            CronDaemon d = new CronDaemon();
+            d.AddJob("* * * * *", () =>
+            {
+                // Do something
+                Thread.Sleep(40 * 1000);
+
+                // Throw test error
+                Assert.True(false);
+            });
+
+            d.Start();
+
+            Thread.Sleep(40 * 1000);
+
+            d.Stop();
+
+            Thread.Sleep(40 * 1000);
         }
     }
 }
