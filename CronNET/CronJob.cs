@@ -1,32 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CronNET
+﻿namespace CronNET
 {
     public class CronJob : ICronJob
     {
-        private readonly ICronSchedule _cron_schedule = new CronSchedule();
+        private readonly ICronSchedule _cronSchedule = new CronSchedule();
         private readonly Action _action;
         private readonly Task _task;
-        private CancellationTokenSource _cts{ get; set; }
+        private CancellationTokenSource Cts{ get; set; }
 
         public CronJob(string schedule, Action action)
         {
-            _cron_schedule = new CronSchedule(schedule);
+            _cronSchedule = new CronSchedule(schedule);
             _action = action;
 
-            _cts = new CancellationTokenSource();
+            Cts = new CancellationTokenSource();
 
             _task = new Task(() =>
             {
                 try
                 {
                     // Specify this thread's Abort() as the cancel delegate
-                    using (_cts.Token.Register(() => { 
-                        //Console.WriteLine("canceled");
+                    using (Cts.Token.Register(() => { 
                         return;
                     }))
                     {
@@ -39,9 +32,9 @@ namespace CronNET
                 }
                 finally
                 {
-                    _cts.Dispose();
+                    Cts.Dispose();
                 }
-            }, _cts.Token);
+            }, Cts.Token);
         }
 
         private object _lock = new object();
@@ -49,7 +42,7 @@ namespace CronNET
         {
             lock (_lock)
             {
-                if (!_cron_schedule.IsTime(dateTime))
+                if (!_cronSchedule.IsTime(dateTime))
                     return;
 
                 if (_task.Status == TaskStatus.Running)
@@ -61,7 +54,7 @@ namespace CronNET
 
         public void Abort()
         {
-            _cts.Cancel();
+            Cts.Cancel();
         }
     }
 }
