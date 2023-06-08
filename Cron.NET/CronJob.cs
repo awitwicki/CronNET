@@ -4,14 +4,11 @@ public class CronJob : ICronJob
 {
     private readonly ICronSchedule _cronSchedule;
     private readonly Action _action;
-    private readonly Task _task;
-    private CancellationTokenSource Cts { get; set; }
+    private Task? _task;
+    private CancellationTokenSource? Cts { get; set; }
 
-    public CronJob(string schedule, Action action)
+    private void InitTask()
     {
-        _cronSchedule = new CronSchedule(schedule);
-        _action = action;
-
         Cts = new CancellationTokenSource();
 
         _task = new Task(() =>
@@ -19,7 +16,7 @@ public class CronJob : ICronJob
             try
             {
                 // Specify this thread's Abort() as the cancel delegate
-                using (Cts.Token.Register(() => { return; }))
+                using (Cts.Token.Register(() => {}))
                 {
                     _action();
                 }
@@ -35,6 +32,13 @@ public class CronJob : ICronJob
         }, Cts.Token);
     }
 
+    public CronJob(string schedule, Action action)
+    {
+        _cronSchedule = new CronSchedule(schedule);
+        _action = action;
+        InitTask();
+    }
+
     private readonly object _lock = new();
 
     public void Execute(DateTime dateTime)
@@ -44,18 +48,20 @@ public class CronJob : ICronJob
             if (!_cronSchedule.IsTime(dateTime))
                 return;
 
-            if (_task.Status == TaskStatus.Running)
+            if (_task?.Status == TaskStatus.Running)
                 return;
-
-            _task.Start();
+            
+            InitTask();
+            
+            _task?.Start();
         }
     }
 
     public void Abort()
     {
-        if (_task.Status == TaskStatus.Running)
+        if (_task?.Status == TaskStatus.Running)
         {
-            Cts.Cancel();
+            Cts?.Cancel();
         }
     }
 }
