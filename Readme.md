@@ -2,15 +2,18 @@
 
 CronNET is a simple C# library for running tasks based on a cron schedule.
 
-This repo is fork of original CronNET library, ported for work with .net 6
+This repo is fork of original CronNET library, ported for work with dotnet 7
 
-## Tests
+![Tests](https://img.shields.io/badge/Cron.NET-V1.0.0-blue)
 
-![Tests](https://img.shields.io/github/workflow/status/awitwicki/CronNET/.NET)
+[![Tests](https://img.shields.io/nuget/v/Cron.NET)](https://www.nuget.org/packages/Cron.NET/)
+
+
+[![Build and test](https://github.com/awitwicki/PowerBot.Lite/actions/workflows/dotnet.yml/badge.svg)](https://github.com/awitwicki/PowerBot.Lite/actions/workflows/dotnet.yml)
 ![Tests](https://img.shields.io/github/issues/awitwicki/CronNET)
 ![License](https://img.shields.io/badge/License-MIT-blue)
 ![Tests](https://img.shields.io/github/languages/top/awitwicki/CronNET)
-![Tests](https://img.shields.io/badge/dotnet-6.0-blue)
+![Tests](https://img.shields.io/badge/dotnet-7.0-blue)
 ![Tests](https://img.shields.io/github/last-commit/awitwicki/CronNET)
 
 ## Cron Schedules
