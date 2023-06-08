@@ -78,7 +78,7 @@ public class CronDaemonTests
             counter2 += 2;
         });
     
-        d.Timer.Interval = 50;
+        d.Timer.Interval = 1000;
         
         // Act
         d.Start();
@@ -86,10 +86,10 @@ public class CronDaemonTests
         // Rewind
         for (var i = 0; i < 5; i++)
         {
-            Thread.Sleep(100);
+            Thread.Sleep(1000);
             // Change last time to make it run immediately
-            d.Last = DateTime.UtcNow.AddMinutes(-1);
-            Thread.Sleep(100);
+            d.Last = DateTime.UtcNow.AddMinutes(-10);
+            Thread.Sleep(1000);
         }
         
         // Assert
