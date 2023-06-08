@@ -1,5 +1,3 @@
-using System;
-using System.Threading;
 using Cron.NET;
 using Xunit;
 
