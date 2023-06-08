@@ -14,10 +14,11 @@ public class CronDaemon : ICronDaemon
         Timer.Elapsed += _timerElapsed!;
     }
 
-    public void AddJob(string schedule, Action action)
+    public CronDaemon AddJob(string schedule, Action action)
     {
         var cj = new CronJob(schedule, action);
         _cronJobs.Add(cj);
+        return this;
     }
 
     public void Start()

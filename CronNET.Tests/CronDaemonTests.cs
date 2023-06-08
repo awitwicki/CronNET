@@ -72,8 +72,8 @@ public class CronDaemonTests
         d.AddJob("* * * * *", () =>
         {
             counter1 += 1;
-        });
-        d.AddJob("* * * * *", () =>
+        })
+        .AddJob("* * * * *", () =>
         {
             counter2 += 2;
         });
@@ -133,8 +133,8 @@ public class CronDaemonTests
         d.AddJob("* * * * *", () =>
         {
             // Nothing
-        });
-        d.AddJob("* * * * *", () =>
+        })
+        .AddJob("* * * * *", () =>
         {
             Thread.Sleep(100);
             counter++;
